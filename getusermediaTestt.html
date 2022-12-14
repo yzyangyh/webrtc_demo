@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <script src="jquery-1.8.3.min.js"></script>
+</head>
+<body>
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="snap">Snap Photo</button>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <script type="text/javascript">
+        var canvas = document.getElementById("canvas");
+        var context = canvas.getContext("2d");
+        var video = document.getElementById("video");
+        $(document).ready(function () {
+            videoObj = { video: true};          
+            var errBack = function (error) {
+                console.log("Video capture error: ", error.code);
+            };
+            if (navigator.getUserMedia) { // Standard
+                navigator.getUserMedia(videoObj, function (stream) {
+                }, errBack);
+            } else if (navigator.webkitGetUserMedia) { // WebKit-prefixed
+                navigator.webkitGetUserMedia(videoObj, function (stream) {
+                    
+                }, errBack);
+            }
+            else if (navigator.mozGetUserMedia) { // Firefox-prefixed
+                navigator.mozGetUserMedia(videoObj, function (stream) {
+                }, errBack);
+            };
+            $("#snap").on("click", function () {
+                context.drawImage(video, 0, 0, 640, 480);
+            });
+
+            var count = 0;
+            setInterval(function () {
+                var dev = navigator.mediaDevices.enumerateDevices();
+                console.log("navigator.mediaDevices.enumerateDevices,count=",count);
+                count++;
+                if (dev) {
+                    dev.then(function (devices) {
+                        console.log("dev.then,count=",count);                  
+                    });
+
+                    dev.catch(function (error) {
+                        console.log("dev.then,catch=",count);  
+                    });
+                }
+                
+            }, 1000);
+        });      
+    </script>
+</body>
+</html>
